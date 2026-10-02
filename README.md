@@ -1,44 +1,46 @@
-# AstroWind - Free Tailwind CSS & Astro Blogging Website Template
-#### Preview
+# Astro Starter Kit: Basics
 
- - [Demo](https://themewagon.github.io/astrowind/)
-
-#### Download
- - [Download from ThemeWagon](https://themewagon.com/themes/astrowind/)
-
-## Getting Started
-
-1. Clone Repository
-```
-git clone https://github.com/themewagon/astrowind.git
-```
-2. Install Dependencies
-```
-npm i
-```
-3. Run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```sh
+npm create astro@latest -- --template basics
 ```
 
-## Author 
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+
+## 🚀 Project Structure
+
+Inside of your Astro project, you'll see the following folders and files:
+
+```text
+/
+├── public/
+│   └── favicon.svg
+├── src
+│   ├── assets
+│   │   └── astro.svg
+│   ├── components
+│   │   └── Welcome.astro
+│   ├── layouts
+│   │   └── Layout.astro
+│   └── pages
+│       └── index.astro
+└── package.json
 ```
-Design and code is completely written by Arthelokyo and development team. 
-```
 
-## Acknowledgements
+To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
 
-Initially created by **Arthelokyo** and maintained by a community of [contributors](https://github.com/arthelokyo/astrowind/graphs/contributors).
+## 🧞 Commands
 
-## License
+All commands are run from the root of the project, from a terminal:
 
- - Design and Code is Copyright &copy; <a href="https://github.com/arthelokyo" target="_blank">Arthelokyo</a>
- - Licensed cover under [MIT]
- - Distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `npm install`             | Installs dependencies                            |
+| `npm run dev`             | Starts local dev server at `localhost:4321`      |
+| `npm run build`           | Build your production site to `./dist/`          |
+| `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `npm run astro -- --help` | Get help using the Astro CLI                     |
+
+## 👀 Want to learn more?
+
+Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
