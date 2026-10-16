@@ -1,1 +1,38 @@
 @import "tailwindcss";
+
+@theme {
+  /* Typography */
+  --font-sans: "Manrope", sans-serif;
+  --font-mono: "DM Mono", monospace;
+
+  /* Accent colours */
+  --color-brand: #F05A24;        /* Tiger Flame */
+  --color-accent-light: #F28A5E; /* Light Orange */
+
+  /* Functional UI Colours - Default (Light Mode) */
+  --color-bg-base: #FFFAF1;       /* Floral White */
+  --color-surface-base: #FFFFFF;  /* White */
+  --color-surface-input: #F5F2EB; /* Muted Beige */
+  --color-border-subtle: #A6A39C; /* Muted Grey */
+  --color-text-primary: #081C2C;  /* Ink Black */
+  --color-text-muted: #536068;    /* Slate */
+  --color-bg-opposing: #0C2D48;   /* Deep Space Blue */
+}
+
+/* Dark Mode Overrides */
+html.dark {
+  --color-bg-base: #071722;       /* Ink Black */
+  --color-surface-base: #0C2D48;  /* Deep Space Blue */
+  --color-surface-input: #102B3F; /* Elevated Navy */
+  --color-border-subtle: #294253; /* Subtle Divider */
+  --color-text-primary: #F7F0E4;  /* Old Lace */
+  --color-text-muted: #7F909A;    /* Steel Muted */
+  --color-bg-opposing: #071722;   /* Fallback to dark base if needed, or maintain Contrast */
+}
+
+/* Custom Utilities for Interactive Transitions */
+@layer utilities {
+  .transition-theme {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+}
