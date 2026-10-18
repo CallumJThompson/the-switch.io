@@ -1,0 +1,742 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+// Fetches all .md files from src/content/journal/ and sorts newest first
+const rawArticles = await getCollection("journal");
+const articlesData = rawArticles
+  .sort((a, b) => b.data.num.localeCompare(a.data.num))
+  .map((entry) => ({
+    slug: entry.slug,
+    ...entry.data,
+    // Splits the markdown body into paragraphs for your lightbox reader
+    content: entry.body.trim().split("\n\n"),
+  }));
+
+const featuredArticle = articlesData.find((a) => a.featured) || articlesData[0];
+---
+
+<Layout title="Journal - The Switch">
+  <!-- Solid Standard Header -->
+  <header class="bg-bg-base border-b border-border-subtle/40">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <svg
+          class="w-8 h-8"
+          viewBox="0 0 36 36"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M18 4L31 15L18 32L5 15L18 4Z"
+            fill="#0C2D48"
+            stroke="#081C2C"
+            stroke-width="2"></path>
+          <path
+            d="M18 4L28 13L18 22L8 13L18 4Z"
+            fill="#FFFAF1"
+            stroke="#081C2C"
+            stroke-width="2"></path>
+          <rect
+            x="14"
+            y="6"
+            width="8"
+            height="8"
+            transform="rotate(-45 14 6)"
+            fill="#F05A24"
+            stroke="#081C2C"
+            stroke-width="1.5"></rect>
+        </svg>
+        <span
+          class="font-sans font-bold tracking-tight text-xl text-text-primary uppercase"
+          >THE SWITCH</span
+        >
+      </a>
+
+      <nav class="hidden md:flex items-center gap-10 h-full">
+        <a
+          href="/switches"
+          class="font-mono text-xs tracking-widest text-text-muted hover:text-text-primary transition-colors h-full flex items-center uppercase"
+        >
+          SWITCH INDEX
+        </a>
+        <a
+          href="/journal"
+          class="font-mono text-xs tracking-widest text-text-primary border-b-2 border-brand h-full flex items-center uppercase"
+        >
+          JOURNAL
+        </a>
+        <a
+          href="/#lab"
+          class="font-mono text-xs tracking-widest text-text-muted hover:text-text-primary transition-colors h-full flex items-center uppercase"
+        >
+          THE LAB
+        </a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <button
+          id="theme-toggle"
+          type="button"
+          class="flex items-center gap-1 p-1 rounded-full border border-border-subtle bg-surface-input cursor-pointer"
+          aria-label="Toggle colour theme"
+        >
+          <span
+            class="w-7 h-7 rounded-full flex items-center justify-center bg-surface-base text-brand shadow-xs dark:bg-transparent dark:text-text-muted dark:shadow-none transition-all"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"
+              ></path>
+            </svg>
+          </span>
+          <span
+            class="w-7 h-7 rounded-full flex items-center justify-center bg-transparent text-text-muted dark:bg-dark-text dark:text-brand transition-all"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+              ></path>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. Hero Banner -->
+    <section
+      class="bg-surface-input dark:bg-surface-base border-b border-border-subtle/40 py-16 md:py-24 px-6"
+    >
+      <div
+        class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-end justify-between gap-10"
+      >
+        <div>
+          <span
+            class="font-mono text-xs tracking-widest text-brand uppercase block"
+          >
+            THE JOURNAL / {articlesData.length} DISPATCHES
+          </span>
+          <h1
+            class="text-5xl md:text-7xl font-bold tracking-tight text-text-primary mt-4 leading-none"
+          >
+            Short reads.<br />Clear takes.
+          </h1>
+          <p class="text-text-muted text-lg mt-6 max-w-xl leading-relaxed">
+            Concise switch evaluations, testing methodology breakdowns, and
+            mechanical hardware analysis. No filler.
+          </p>
+        </div>
+
+        <p
+          class="font-mono text-xs tracking-widest text-text-muted uppercase max-w-sm leading-relaxed lg:pb-1"
+        >
+          PUBLISHED INDEPENDENTLY. ZERO SPONSORED REVIEWS OR MANUFACTURER
+          SAMPLES.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2. Featured Dispatch Block -->
+    <section class="max-w-7xl mx-auto px-6 pt-16 pb-8">
+      <div class="flex items-center justify-between mb-6">
+        <span class="font-mono text-xs tracking-widest text-brand uppercase"
+          >FEATURED DISPATCH / #01</span
+        >
+        <span
+          class="font-mono text-xs tracking-widest text-text-muted uppercase"
+          >{featuredArticle.date}</span
+        >
+      </div>
+
+      <article
+        class="journal-card grid grid-cols-1 lg:grid-cols-12 border border-border-subtle/50 bg-surface-base hover:border-brand transition-colors cursor-pointer group"
+        data-num={featuredArticle.num}
+        data-category={featuredArticle.category}
+        data-date={featuredArticle.date}
+        data-title={featuredArticle.title}
+        data-readtime={featuredArticle.readTime}
+        data-spec={featuredArticle.specHighlight}
+        data-content={JSON.stringify(featuredArticle.content)}
+      >
+        <!-- Left Content Column (7 Cols) -->
+        <div class="lg:col-span-7 p-8 md:p-12 flex flex-col justify-between">
+          <div>
+            <div class="flex flex-wrap items-center gap-3 mb-6">
+              <span
+                class="px-3 py-1 bg-brand text-white font-mono text-[10px] tracking-widest rounded-full uppercase"
+              >
+                {featuredArticle.category}
+              </span>
+              {
+                featuredArticle.tags.map((tag) => (
+                  <span class="px-3 py-1 border border-border-subtle/50 font-mono text-[10px] tracking-widest text-text-muted rounded-full uppercase">
+                    {tag}
+                  </span>
+                ))
+              }
+            </div>
+
+            <h2
+              class="text-3xl md:text-5xl font-bold tracking-tight text-text-primary group-hover:text-brand transition-colors leading-tight"
+            >
+              {featuredArticle.title}
+            </h2>
+
+            <p class="text-text-muted text-lg mt-6 leading-relaxed">
+              {featuredArticle.excerpt}
+            </p>
+          </div>
+
+          <div
+            class="flex items-center justify-between pt-8 mt-10 border-t border-border-subtle/30"
+          >
+            <span
+              class="font-sans font-bold text-sm text-text-primary group-hover:text-brand flex items-center gap-2"
+            >
+              Read full article <span>→</span>
+            </span>
+            <span
+              class="font-mono text-xs tracking-widest text-text-muted uppercase"
+            >
+              {featuredArticle.readTime}
+            </span>
+          </div>
+        </div>
+
+        <!-- Right Blueprint Preview Column (5 Cols - Always Deep Space Blue) -->
+        <div
+          class="lg:col-span-5 bg-dark-navy text-dark-text p-8 md:p-10 flex flex-col justify-between relative overflow-hidden min-h-80 border-t lg:border-t-0 lg:border-l border-border-subtle/50"
+        >
+          <div
+            class="absolute inset-0 opacity-15 pointer-events-none"
+            style="background-size: 36px 36px; background-image: linear-gradient(to right, #294253 1px, transparent 1px), linear-gradient(to bottom, #294253 1px, transparent 1px);"
+          >
+          </div>
+
+          <div
+            class="relative z-10 flex justify-between items-center font-mono text-[10px] tracking-widest text-dark-muted"
+          >
+            <span>BATCH VARIANCE OVERLAY</span>
+            <span>5 UNITS TESTED</span>
+          </div>
+
+          <!-- Mini Force Curve Graphic -->
+          <div
+            class="relative z-10 my-8 border border-dark-border bg-dark-canvas/50 p-5"
+          >
+            <svg
+              class="w-full h-32 overflow-visible border-l border-b border-dark-border"
+              viewBox="0 0 300 100"
+              preserveAspectRatio="none"
+            >
+              <line
+                x1="0"
+                y1="25"
+                x2="300"
+                y2="25"
+                stroke="#294253"
+                stroke-dasharray="3,3"></line>
+              <line
+                x1="0"
+                y1="50"
+                x2="300"
+                y2="50"
+                stroke="#294253"
+                stroke-dasharray="3,3"></line>
+              <line
+                x1="0"
+                y1="75"
+                x2="300"
+                y2="75"
+                stroke="#294253"
+                stroke-dasharray="3,3"></line>
+              <!-- Reference Curve -->
+              <path
+                d="M 0 85 C 75 68, 150 48, 225 32 L 300 20"
+                fill="none"
+                stroke="#7F909A"
+                stroke-width="1.5"
+                stroke-dasharray="4,4"></path>
+              <!-- Measured Curve -->
+              <path
+                d="M 0 82 C 75 65, 150 45, 225 30 L 300 18"
+                fill="none"
+                stroke="#F05A24"
+                stroke-width="2.5"></path>
+              <circle
+                cx="150"
+                cy="45"
+                r="4"
+                fill="#F05A24"
+                stroke="#FFFFFF"
+                stroke-width="1.5"></circle>
+            </svg>
+            <div
+              class="flex justify-between font-mono text-[9px] text-dark-muted mt-2"
+            >
+              <span>0.0MM</span>
+              <span>2.0MM (55G)</span>
+              <span>4.0MM (65G)</span>
+            </div>
+          </div>
+
+          <div
+            class="relative z-10 flex justify-between items-end font-mono text-xs"
+          >
+            <div>
+              <span class="text-[10px] text-brand block uppercase"
+                >SPECIMEN REF</span
+              >
+              <span class="text-white font-bold">Gateron Oil King</span>
+            </div>
+            <span class="text-[10px] text-dark-muted">TOLERANCE: ±1.8G</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- 3. Filter & Archive Section -->
+    <section class="max-w-7xl mx-auto px-6 py-16">
+      <!-- Search & Category Controls -->
+      <div
+        class="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between pb-8 border-b border-border-subtle/40"
+      >
+        <div class="flex-1 max-w-xl relative">
+          <input
+            id="journal-search"
+            type="text"
+            placeholder="Search articles by title, switch, or topic"
+            class="w-full bg-surface-input dark:bg-surface-base border border-border-subtle/50 focus:border-brand outline-none px-4 py-3.5 pl-11 font-sans text-sm text-text-primary placeholder:text-text-muted transition-colors"
+          />
+          <svg
+            class="w-4 h-4 absolute left-4 top-4 text-text-muted"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2" id="category-pills">
+          <button
+            data-cat="ALL"
+            class="cat-pill px-6 py-2.5 bg-text-primary text-bg-base font-sans font-bold text-xs rounded-full cursor-pointer transition-colors"
+          >
+            All
+          </button>
+          <button
+            data-cat="REVIEW"
+            class="cat-pill px-6 py-2.5 bg-transparent border border-border-subtle text-text-primary font-sans font-bold text-xs rounded-full hover:border-brand hover:text-brand cursor-pointer transition-colors"
+          >
+            Reviews
+          </button>
+          <button
+            data-cat="LAB NOTES"
+            class="cat-pill px-6 py-2.5 bg-transparent border border-border-subtle text-text-primary font-sans font-bold text-xs rounded-full hover:border-brand hover:text-brand cursor-pointer transition-colors"
+          >
+            Lab Notes
+          </button>
+          <button
+            data-cat="GUIDE"
+            class="cat-pill px-6 py-2.5 bg-transparent border border-border-subtle text-text-primary font-sans font-bold text-xs rounded-full hover:border-brand hover:text-brand cursor-pointer transition-colors"
+          >
+            Guides
+          </button>
+        </div>
+      </div>
+
+      <!-- Status Bar -->
+      <div
+        class="flex items-center justify-between py-6 font-mono text-xs tracking-widest text-text-muted uppercase"
+      >
+        <span
+          >SHOWING <strong id="article-count" class="text-text-primary"
+            >{articlesData.length}</strong
+          > ARTICLES</span
+        >
+        <span>SORTED BY: LATEST</span>
+      </div>
+
+      <!-- Numbered Article Rows -->
+      <div
+        id="articles-list"
+        class="flex flex-col border-t border-border-subtle/40"
+      >
+        {
+          articlesData.map((item) => (
+            <article
+              class="journal-card article-row border-b border-border-subtle/40 py-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8 group cursor-pointer hover:bg-surface-input/40 dark:hover:bg-surface-base/40 px-4 -mx-4 transition-colors"
+              data-num={item.num}
+              data-category={item.category}
+              data-date={item.date}
+              data-title={item.title}
+              data-excerpt={item.excerpt}
+              data-tags={item.tags.join(" ")}
+              data-readtime={item.readTime}
+              data-spec={item.specHighlight}
+              data-content={JSON.stringify(item.content)}
+            >
+              <div class="flex items-start gap-6 md:gap-10 max-w-3xl">
+                <span class="font-sans text-4xl md:text-5xl font-bold text-text-muted/35 group-hover:text-brand transition-colors select-none pt-1">
+                  {item.num}
+                </span>
+                <div>
+                  <div class="flex flex-wrap items-center gap-4 font-mono text-xs tracking-widest uppercase mb-2">
+                    <span class="text-brand font-bold">{item.category}</span>
+                    <span class="text-text-muted">{item.date}</span>
+                  </div>
+                  <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-text-primary group-hover:text-brand transition-colors">
+                    {item.title}
+                  </h2>
+                  <p class="text-text-muted text-base mt-3 leading-relaxed">
+                    {item.excerpt}
+                  </p>
+                  <div class="flex flex-wrap gap-2 mt-4">
+                    {item.tags.map((tag) => (
+                      <span class="px-2.5 py-0.5 border border-border-subtle/40 font-mono text-[10px] tracking-widest text-text-muted uppercase">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between lg:justify-end gap-8 pl-14 lg:pl-0 shrink-0">
+                <span class="font-mono text-xs tracking-widest text-text-muted uppercase whitespace-nowrap">
+                  {item.readTime}
+                </span>
+                <span class="w-10 h-10 rounded-full border border-border-subtle/50 flex items-center justify-center text-text-primary group-hover:border-brand group-hover:bg-brand group-hover:text-white transition-colors">
+                  →
+                </span>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <!-- Empty Search State -->
+      <div
+        id="journal-empty"
+        class="hidden border border-border-subtle/50 bg-surface-base p-16 text-center my-8"
+      >
+        <p class="font-mono text-sm tracking-widest text-text-muted uppercase">
+          No articles match your search or category filter.
+        </p>
+      </div>
+    </section>
+
+    <!-- 4. Newsletter CTA Banner -->
+    <section class="bg-brand text-white text-center px-6 py-24">
+      <div class="max-w-2xl mx-auto flex flex-col items-center">
+        <span class="font-mono text-xs tracking-widest text-white/90 uppercase"
+          >NEW TEST DATA, ONCE A MONTH</span
+        >
+        <h2
+          class="text-4xl md:text-6xl font-bold tracking-tight mt-4 mb-12 leading-[1.05]"
+        >
+          Keep your finger on the switch.
+        </h2>
+
+        <form
+          class="w-full max-w-lg border-b border-white flex items-center justify-between gap-4 py-3"
+        >
+          <input
+            type="email"
+            placeholder="Email address"
+            class="bg-transparent border-none outline-none flex-1 font-sans text-base placeholder:text-white/80 text-white"
+            required
+          />
+          <button
+            type="submit"
+            class="font-mono text-sm tracking-widest uppercase text-white hover:opacity-80 flex items-center gap-2 cursor-pointer"
+          >
+            SUBSCRIBE <span>→</span>
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- 5. Footer -->
+  <footer
+    class="bg-dark-canvas text-dark-text py-16 px-6 border-t border-dark-border"
+  >
+    <div
+      class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8 pb-12 border-b border-dark-border"
+    >
+      <div class="flex items-center gap-3">
+        <svg
+          class="w-8 h-8"
+          viewBox="0 0 36 36"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M18 4L31 15L18 32L5 15L18 4Z"
+            fill="#0C2D48"
+            stroke="#081C2C"
+            stroke-width="2"></path>
+          <path
+            d="M18 4L28 13L18 22L8 13L18 4Z"
+            fill="#FFFAF1"
+            stroke="#081C2C"
+            stroke-width="2"></path>
+          <rect
+            x="14"
+            y="6"
+            width="8"
+            height="8"
+            transform="rotate(-45 14 6)"
+            fill="#F05A24"
+            stroke="#081C2C"
+            stroke-width="1.5"></rect>
+        </svg>
+        <span
+          class="font-sans font-bold tracking-tight text-xl text-white uppercase"
+          >THE SWITCH</span
+        >
+      </div>
+
+      <div
+        class="flex flex-wrap gap-8 font-mono text-xs tracking-widest text-dark-muted"
+      >
+        <a href="/switches" class="hover:text-white transition-colors">INDEX</a>
+        <a href="/journal" class="hover:text-white transition-colors">JOURNAL</a
+        >
+        <a href="/#lab" class="hover:text-white transition-colors">TESTING</a>
+        <a href="/#about" class="hover:text-white transition-colors">ABOUT</a>
+      </div>
+    </div>
+
+    <div
+      class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-4 pt-8 font-mono text-xs text-dark-muted"
+    >
+      <span>© 2026 THE SWITCH. All rights reserved.</span>
+      <span>Independent force curve data & switch reviews.</span>
+    </div>
+  </footer>
+
+  <!-- Interactive Article Reader Lightbox (<dialog>) -->
+  <dialog
+    id="article-lightbox"
+    class="m-auto w-full max-w-3xl bg-surface-base dark:bg-bg-base text-text-primary border border-border-subtle p-0 backdrop:bg-dark-canvas/80 backdrop:backdrop-blur-xs shadow-2xl"
+  >
+    <div class="p-6 md:p-12">
+      <!-- Reader Header -->
+      <div
+        class="flex items-start justify-between border-b border-border-subtle/40 pb-6"
+      >
+        <div
+          class="flex items-center gap-3 font-mono text-xs tracking-widest uppercase"
+        >
+          <span id="reader-category" class="text-brand font-bold">REVIEW</span>
+          <span class="text-text-muted">/</span>
+          <span id="reader-date" class="text-text-muted">12 JUN 2026</span>
+          <span class="text-text-muted">/</span>
+          <span id="reader-readtime" class="text-text-muted">4 MIN READ</span>
+        </div>
+
+        <button
+          id="close-reader"
+          type="button"
+          class="p-2 border border-border-subtle text-text-muted hover:text-brand hover:border-brand cursor-pointer transition-colors font-mono text-xs uppercase"
+          aria-label="Close article reader"
+        >
+          ESC ✕
+        </button>
+      </div>
+
+      <!-- Article Title & Spec Callout -->
+      <div class="py-8 border-b border-border-subtle/40">
+        <h2
+          id="reader-title"
+          class="text-3xl md:text-5xl font-bold tracking-tight text-text-primary leading-tight"
+        >
+        </h2>
+        <div
+          class="mt-6 p-4 bg-surface-input dark:bg-surface-base border-l-2 border-brand flex items-center justify-between font-mono text-xs"
+        >
+          <span class="text-text-muted uppercase">TECHNICAL FOCUS:</span>
+          <span id="reader-spec" class="font-bold text-text-primary"></span>
+        </div>
+      </div>
+
+      <!-- Article Body Copy -->
+      <div
+        id="reader-body"
+        class="py-8 space-y-6 text-text-primary text-lg leading-relaxed"
+      >
+      </div>
+
+      <!-- Reader Footer -->
+      <div
+        class="pt-6 border-t border-border-subtle/40 flex justify-between items-center font-mono text-xs text-text-muted"
+      >
+        <span>VERIFIED LAB DISPATCH</span>
+        <a href="/switches" class="text-brand hover:underline uppercase"
+          >Explore Switch Index →</a
+        >
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    // 1. Theme Toggle
+    const themeToggleBtn = document.getElementById("theme-toggle");
+    themeToggleBtn?.addEventListener("click", () => {
+      const isDark = document.documentElement.classList.toggle("dark");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+
+    // 2. Category Pill Filtering & Search
+    const searchInput = document.getElementById(
+      "journal-search",
+    ) as HTMLInputElement;
+    const catPills = Array.from(
+      document.querySelectorAll(".cat-pill"),
+    ) as HTMLButtonElement[];
+    const articleRows = Array.from(
+      document.querySelectorAll(".article-row"),
+    ) as HTMLElement[];
+    const countEl = document.getElementById("article-count");
+    const emptyEl = document.getElementById("journal-empty");
+    let activeCategory = "ALL";
+
+    function filterArticles() {
+      const query = searchInput.value.toLowerCase().trim();
+      let visibleCount = 0;
+
+      articleRows.forEach((row) => {
+        const title = (row.dataset.title || "").toLowerCase();
+        const excerpt = (row.dataset.excerpt || "").toLowerCase();
+        const tags = (row.dataset.tags || "").toLowerCase();
+        const category = row.dataset.category || "";
+
+        const matchesCategory =
+          activeCategory === "ALL" || category === activeCategory;
+        const matchesSearch =
+          !query ||
+          title.includes(query) ||
+          excerpt.includes(query) ||
+          tags.includes(query);
+
+        if (matchesCategory && matchesSearch) {
+          row.classList.remove("hidden");
+          visibleCount++;
+        } else {
+          row.classList.add("hidden");
+        }
+      });
+
+      if (countEl) countEl.textContent = String(visibleCount);
+      if (emptyEl) {
+        if (visibleCount === 0) {
+          emptyEl.classList.remove("hidden");
+        } else {
+          emptyEl.classList.add("hidden");
+        }
+      }
+    }
+
+    catPills.forEach((pill) => {
+      pill.addEventListener("click", () => {
+        activeCategory = pill.dataset.cat || "ALL";
+
+        catPills.forEach((p) => {
+          p.classList.remove("bg-text-primary", "text-bg-base");
+          p.classList.add(
+            "bg-transparent",
+            "border",
+            "border-border-subtle",
+            "text-text-primary",
+          );
+        });
+
+        pill.classList.add("bg-text-primary", "text-bg-base");
+        pill.classList.remove(
+          "bg-transparent",
+          "border",
+          "border-border-subtle",
+          "text-text-primary",
+        );
+
+        filterArticles();
+      });
+    });
+
+    searchInput?.addEventListener("input", filterArticles);
+
+    // 3. Article Reader Lightbox Modal
+    const dialog = document.getElementById(
+      "article-lightbox",
+    ) as HTMLDialogElement;
+    const closeReaderBtn = document.getElementById("close-reader");
+    const allJournalCards = Array.from(
+      document.querySelectorAll(".journal-card"),
+    ) as HTMLElement[];
+
+    allJournalCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        (
+          document.getElementById("reader-category") as HTMLElement
+        ).textContent = card.dataset.category || "";
+        (document.getElementById("reader-date") as HTMLElement).textContent =
+          card.dataset.date || "";
+        (
+          document.getElementById("reader-readtime") as HTMLElement
+        ).textContent = card.dataset.readtime || "";
+        (document.getElementById("reader-title") as HTMLElement).textContent =
+          card.dataset.title || "";
+        (document.getElementById("reader-spec") as HTMLElement).textContent =
+          card.dataset.spec || "";
+
+        const bodyContainer = document.getElementById("reader-body");
+        if (bodyContainer && card.dataset.content) {
+          const paragraphs: string[] = JSON.parse(card.dataset.content);
+          bodyContainer.innerHTML = paragraphs
+            .map((p) => `<p>${p}</p>`)
+            .join("");
+        }
+
+        dialog?.showModal();
+      });
+    });
+
+    closeReaderBtn?.addEventListener("click", () => dialog?.close());
+
+    dialog?.addEventListener("click", (e) => {
+      const rect = dialog.getBoundingClientRect();
+      const clickedInDialog =
+        rect.top <= e.clientY &&
+        e.clientY <= rect.top + rect.height &&
+        rect.left <= e.clientX &&
+        e.clientX <= rect.left + rect.width;
+      if (!clickedInDialog) {
+        dialog.close();
+      }
+    });
+  </script>
+</Layout>

@@ -1,0 +1,624 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+// Fetches all .md files from src/content/switches/ and sorts them by ID number
+const rawSwitches = await getCollection('switches');
+const switchesData = rawSwitches
+  .sort((a, b) => a.data.idNumber.localeCompare(b.data.idNumber))
+  .map((entry) => ({
+    id: entry.data.idNumber,
+    ...entry.data,
+    summary: entry.body.trim(), // Grabs the written paragraph below the ---
+  }));
+---
+
+<Layout title="Switch Index - The Switch">
+  <!-- Solid Standard Header -->
+  <header class="bg-bg-base border-b border-border-subtle/40">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <svg class="w-8 h-8" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 4L31 15L18 32L5 15L18 4Z" fill="#0C2D48" stroke="#081C2C" stroke-width="2"/>
+          <path d="M18 4L28 13L18 22L8 13L18 4Z" fill="#FFFAF1" stroke="#081C2C" stroke-width="2"/>
+          <rect x="14" y="6" width="8" height="8" transform="rotate(-45 14 6)" fill="#F05A24" stroke="#081C2C" stroke-width="1.5"/>
+        </svg>
+        <span class="font-sans font-bold tracking-tight text-xl text-text-primary uppercase">THE SWITCH</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-10 h-full">
+        <a href="/switches" class="font-mono text-xs tracking-widest text-text-primary border-b-2 border-brand h-full flex items-center uppercase">
+          SWITCH INDEX
+        </a>
+        <a href="/journal" class="font-mono text-xs tracking-widest text-text-muted hover:text-text-primary transition-colors h-full flex items-center uppercase">
+          JOURNAL
+        </a>
+        <a href="/#lab" class="font-mono text-xs tracking-widest text-text-muted hover:text-text-primary transition-colors h-full flex items-center uppercase">
+          THE LAB
+        </a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <button
+          id="theme-toggle"
+          type="button"
+          class="flex items-center gap-1 p-1 rounded-full border border-border-subtle bg-surface-input cursor-pointer"
+          aria-label="Toggle colour theme"
+        >
+          <span class="w-7 h-7 rounded-full flex items-center justify-center bg-surface-base text-brand shadow-xs dark:bg-transparent dark:text-text-muted dark:shadow-none transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+            </svg>
+          </span>
+          <span class="w-7 h-7 rounded-full flex items-center justify-center bg-transparent text-text-muted dark:bg-dark-text dark:text-brand transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Banner -->
+    <section class="bg-surface-input dark:bg-surface-base border-b border-border-subtle/40 py-16 md:py-24 px-6">
+      <div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+        <div>
+          <span class="font-mono text-xs tracking-widest text-brand uppercase block">
+            THE DATABASE / 186 TESTED
+          </span>
+          <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-text-primary mt-4 leading-none">
+            Switch index.
+          </h1>
+          <p class="text-text-muted text-lg mt-6 max-w-xl leading-relaxed">
+            Compare independently tested mechanical switches by feel, force, travel, and manufacturer.
+          </p>
+        </div>
+
+        <p class="font-mono text-xs tracking-widest text-text-muted uppercase max-w-sm leading-relaxed lg:pb-1">
+          EVERY ENTRY USES THE SAME REPEATABLE TEST PROCESS FOR CONSISTENT, COMPARABLE DATA.
+        </p>
+      </div>
+    </section>
+
+    <!-- Filter Controls & Results Container -->
+    <section class="max-w-7xl mx-auto px-6 py-12">
+      <!-- Filter Box -->
+      <div class="bg-surface-base border border-border-subtle/50 p-5 md:p-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 items-stretch">
+          <!-- Search Input (Spans 3 cols on lg) -->
+          <div class="lg:col-span-3 border border-border-subtle/50 bg-surface-input/40 dark:bg-bg-base/40 px-4 py-3 flex flex-col justify-between focus-within:border-brand transition-colors">
+            <svg class="w-4 h-4 text-text-muted self-center mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input
+              id="filter-search"
+              type="text"
+              placeholder="Search switches"
+              class="w-full bg-transparent border-none outline-none font-sans text-sm text-text-primary placeholder:text-text-muted"
+            />
+          </div>
+
+          <!-- Type Select (Spans 2 cols on lg) -->
+          <div class="lg:col-span-2 border border-border-subtle/50 bg-surface-input/40 dark:bg-bg-base/40 px-4 py-3 flex flex-col justify-center focus-within:border-brand transition-colors">
+            <label for="filter-type" class="font-mono text-[10px] tracking-widest text-text-muted uppercase block mb-1">
+              TYPE
+            </label>
+            <select id="filter-type" class="w-full bg-transparent font-sans text-sm font-bold text-text-primary outline-none cursor-pointer">
+              <option value="all" class="bg-surface-base text-text-primary">All</option>
+              <option value="Linear" class="bg-surface-base text-text-primary">Linear</option>
+              <option value="Tactile" class="bg-surface-base text-text-primary">Tactile</option>
+              <option value="Clicky" class="bg-surface-base text-text-primary">Clicky</option>
+            </select>
+          </div>
+
+          <!-- Maker Select (Spans 2 cols on lg) -->
+          <div class="lg:col-span-2 border border-border-subtle/50 bg-surface-input/40 dark:bg-bg-base/40 px-4 py-3 flex flex-col justify-center focus-within:border-brand transition-colors">
+            <label for="filter-maker" class="font-mono text-[10px] tracking-widest text-text-muted uppercase block mb-1">
+              MAKER
+            </label>
+            <select id="filter-maker" class="w-full bg-transparent font-sans text-sm font-bold text-text-primary outline-none cursor-pointer">
+              <option value="all" class="bg-surface-base text-text-primary">All</option>
+              <option value="Cherry" class="bg-surface-base text-text-primary">Cherry</option>
+              <option value="Durock" class="bg-surface-base text-text-primary">Durock</option>
+              <option value="Gateron" class="bg-surface-base text-text-primary">Gateron</option>
+              <option value="Gazzew" class="bg-surface-base text-text-primary">Gazzew</option>
+              <option value="Kailh" class="bg-surface-base text-text-primary">Kailh</option>
+              <option value="NovelKeys" class="bg-surface-base text-text-primary">NovelKeys</option>
+              <option value="WS" class="bg-surface-base text-text-primary">WS</option>
+            </select>
+          </div>
+
+          <!-- Force Select (Spans 2 cols on lg) -->
+          <div class="lg:col-span-2 border border-border-subtle/50 bg-surface-input/40 dark:bg-bg-base/40 px-4 py-3 flex flex-col justify-center focus-within:border-brand transition-colors">
+            <label for="filter-force" class="font-mono text-[10px] tracking-widest text-text-muted uppercase block mb-1">
+              FORCE
+            </label>
+            <select id="filter-force" class="w-full bg-transparent font-sans text-sm font-bold text-text-primary outline-none cursor-pointer">
+              <option value="any" class="bg-surface-base text-text-primary">Any</option>
+              <option value="light" class="bg-surface-base text-text-primary">Light (&lt;60g)</option>
+              <option value="medium" class="bg-surface-base text-text-primary">Medium (60g-65g)</option>
+              <option value="heavy" class="bg-surface-base text-text-primary">Heavy (&gt;65g)</option>
+            </select>
+          </div>
+
+          <!-- Travel Select (Spans 2 cols on lg) -->
+          <div class="lg:col-span-2 border border-border-subtle/50 bg-surface-input/40 dark:bg-bg-base/40 px-4 py-3 flex flex-col justify-center focus-within:border-brand transition-colors">
+            <label for="filter-travel" class="font-mono text-[10px] tracking-widest text-text-muted uppercase block mb-1">
+              TRAVEL
+            </label>
+            <select id="filter-travel" class="w-full bg-transparent font-sans text-sm font-bold text-text-primary outline-none cursor-pointer">
+              <option value="any" class="bg-surface-base text-text-primary">Any</option>
+              <option value="short" class="bg-surface-base text-text-primary">Short (&lt;3.8mm)</option>
+              <option value="standard" class="bg-surface-base text-text-primary">Standard (3.8mm-3.9mm)</option>
+              <option value="full" class="bg-surface-base text-text-primary">Full (4.0mm)</option>
+            </select>
+          </div>
+
+          <!-- Reset Action (Spans 1 col on lg) -->
+          <div class="lg:col-span-1 flex items-center justify-center">
+            <button
+              id="filter-reset"
+              type="button"
+              class="font-mono text-xs tracking-widest text-text-primary hover:text-brand uppercase cursor-pointer py-2 px-3 transition-colors"
+            >
+              RESET
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar: Match Counter, Per Page Select, View Switcher -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-8">
+        <div class="font-mono text-xs tracking-widest text-text-muted uppercase">
+          <strong id="match-count" class="text-text-primary font-bold">{switchesData.length}</strong> SWITCHES MATCH YOUR FILTERS
+        </div>
+
+        <div class="flex items-center gap-6">
+          <div class="flex items-center gap-3">
+            <label for="per-page" class="font-mono text-xs tracking-widest text-text-muted uppercase">
+              PER PAGE
+            </label>
+            <select
+              id="per-page"
+              class="bg-surface-base border border-border-subtle/60 px-3 py-2 font-mono text-xs text-text-primary outline-none focus:border-brand cursor-pointer"
+            >
+              <option value="6" selected>6</option>
+              <option value="12">12</option>
+              <option value="24">24</option>
+            </select>
+          </div>
+
+          <!-- Grid / List View Buttons -->
+          <div class="flex items-center border border-border-subtle/60">
+            <button
+              id="view-grid-btn"
+              type="button"
+              class="p-2.5 bg-text-primary text-bg-base cursor-pointer transition-colors"
+              aria-label="Grid view"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+            </button>
+            <button
+              id="view-list-btn"
+              type="button"
+              class="p-2.5 bg-transparent text-text-muted hover:text-text-primary cursor-pointer transition-colors"
+              aria-label="List view"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Switch Items Container -->
+      <div id="switches-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-t border-l border-border-subtle/50">
+        {switchesData.map((sw) => (
+          <article
+            class="switch-item group bg-surface-base dark:bg-bg-base border-r border-b border-border-subtle/50 p-8 flex flex-col justify-between hover:border-brand transition-colors cursor-pointer"
+            data-id={sw.id}
+            data-name={sw.name}
+            data-maker={sw.maker}
+            data-type={sw.type}
+            data-actuation={sw.actuationForce}
+            data-force={sw.bottomOutForce}
+            data-pretravel={sw.preTravel}
+            data-travel={sw.totalTravel}
+            data-top={sw.topHousing}
+            data-bottom={sw.bottomHousing}
+            data-stem={sw.stem}
+            data-lube={sw.factoryLubed}
+            data-summary={sw.summary}
+          >
+            <!-- Grid/List Top Content -->
+            <div class="item-main">
+              <div class="flex items-center justify-between mb-2">
+                <span class="inline-block px-3 py-1 rounded-full border border-border-subtle font-mono text-[10px] tracking-widest text-text-primary uppercase">
+                  {sw.type}
+                </span>
+                <span class="font-mono text-[10px] tracking-widest text-text-muted">#{sw.id}</span>
+              </div>
+
+              <!-- Image Placeholder Box -->
+              <div class="item-thumb aspect-square w-36 mx-auto my-8 bg-surface-input border border-dashed border-border-subtle relative flex flex-col items-center justify-center p-4">
+                <div class="absolute -top-px -left-px w-2 h-2 border-t-2 border-l-2 border-brand"></div>
+                <div class="absolute -bottom-px -right-px w-2 h-2 border-b-2 border-r-2 border-brand"></div>
+                <svg class="w-7 h-7 text-text-muted" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
+                </svg>
+                <span class="font-mono text-[9px] tracking-widest text-text-muted mt-2 uppercase">IMAGE PENDING</span>
+              </div>
+
+              <div class="item-titles">
+                <div class="font-mono text-xs tracking-widest text-brand uppercase">{sw.maker}</div>
+                <h2 class="text-2xl font-bold tracking-tight text-text-primary mt-1 group-hover:text-brand transition-colors">
+                  {sw.name}
+                </h2>
+              </div>
+            </div>
+
+            <!-- Bottom Specs -->
+            <div class="item-specs grid grid-cols-2 gap-4 border-t border-border-subtle/40 mt-6 pt-4 font-mono text-xs">
+              <div class="flex justify-between pr-2 border-r border-border-subtle/40">
+                <span class="text-text-muted">FORCE</span>
+                <span class="font-bold text-text-primary">{sw.bottomOutForce}G</span>
+              </div>
+              <div class="flex justify-between pl-2">
+                <span class="text-text-muted">TRAVEL</span>
+                <span class="font-bold text-text-primary">{sw.totalTravel.toFixed(1)}MM</span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <!-- Empty State Message -->
+      <div id="empty-state" class="hidden border border-border-subtle/50 bg-surface-base p-16 text-center">
+        <p class="font-mono text-sm tracking-widest text-text-muted uppercase">No switches match your active filter criteria.</p>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div id="pagination-bar" class="flex items-center justify-between border-t border-border-subtle/40 mt-10 pt-6 font-mono text-xs">
+        <button
+          id="prev-page"
+          type="button"
+          class="px-4 py-2 border border-border-subtle text-text-primary hover:border-brand disabled:opacity-30 disabled:pointer-events-none cursor-pointer uppercase"
+        >
+          ← Previous
+        </button>
+        <span id="page-indicator" class="text-text-muted tracking-widest uppercase">
+          PAGE 1 OF 2
+        </span>
+        <button
+          id="next-page"
+          type="button"
+          class="px-4 py-2 border border-border-subtle text-text-primary hover:border-brand disabled:opacity-30 disabled:pointer-events-none cursor-pointer uppercase"
+        >
+          Next →
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Specimen Lightbox Modal (<dialog>) -->
+  <dialog
+    id="switch-lightbox"
+    class="m-auto w-full max-w-4xl bg-surface-base dark:bg-bg-base text-text-primary border border-border-subtle p-0 backdrop:bg-dark-canvas/80 backdrop:backdrop-blur-xs shadow-2xl"
+  >
+    <div class="p-6 md:p-10">
+      <!-- Top Bar -->
+      <div class="flex items-start justify-between border-b border-border-subtle/40 pb-6">
+        <div>
+          <div class="flex items-center gap-3">
+            <span id="modal-maker" class="font-mono text-xs tracking-widest text-brand uppercase">DUROCK</span>
+            <span class="text-text-muted">/</span>
+            <span id="modal-id" class="font-mono text-xs tracking-widest text-text-muted">SPECIMEN #028</span>
+            <span id="modal-type" class="ml-2 px-3 py-0.5 rounded-full border border-border-subtle font-mono text-[10px] tracking-widest uppercase">
+              LINEAR
+            </span>
+          </div>
+          <h2 id="modal-name" class="text-3xl md:text-5xl font-bold tracking-tight mt-2">Falcon</h2>
+        </div>
+
+        <button
+          id="close-modal"
+          type="button"
+          class="p-2 border border-border-subtle text-text-muted hover:text-brand hover:border-brand cursor-pointer transition-colors font-mono text-xs uppercase"
+          aria-label="Close modal"
+        >
+          ESC ✕
+        </button>
+      </div>
+
+      <!-- Modal Body Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 py-8 border-b border-border-subtle/40">
+        <!-- Left Column: Force Curve Graph -->
+        <div class="bg-surface-input/50 dark:bg-surface-base border border-border-subtle/40 p-6 flex flex-col justify-between">
+          <div class="flex justify-between items-center mb-6">
+            <span class="font-mono text-[10px] tracking-widest text-text-muted uppercase">MEASURED FORCE CURVE</span>
+            <span class="px-2.5 py-0.5 bg-brand text-white font-mono text-[10px] tracking-widest rounded-full uppercase">VERIFIED</span>
+          </div>
+
+          <div class="w-full h-44 relative pl-6 pb-6">
+            <svg class="w-full h-full overflow-visible border-l border-b border-border-subtle" viewBox="0 0 360 140" preserveAspectRatio="none">
+              <line x1="0" y1="35" x2="360" y2="35" stroke="currentColor" class="text-border-subtle/50" stroke-dasharray="3,4" />
+              <line x1="0" y1="70" x2="360" y2="70" stroke="currentColor" class="text-border-subtle/50" stroke-dasharray="3,4" />
+              <line x1="0" y1="105" x2="360" y2="105" stroke="currentColor" class="text-border-subtle/50" stroke-dasharray="3,4" />
+              <path d="M 0 115 C 90 95, 160 55, 270 35 C 310 28, 340 32, 360 38" fill="none" stroke="#F05A24" stroke-width="3" />
+              <circle cx="270" cy="35" r="5" fill="#F05A24" stroke="#FFFFFF" stroke-width="2" />
+            </svg>
+            <span class="absolute left-0 top-0 font-mono text-[9px] text-text-muted">80g</span>
+            <span class="absolute left-0 top-[50%] font-mono text-[9px] text-text-muted">40g</span>
+            <span class="absolute bottom-0 left-6 font-mono text-[9px] text-text-muted">0mm</span>
+            <span class="absolute bottom-0 right-0 font-mono text-[9px] text-text-muted">4mm</span>
+          </div>
+
+          <div class="grid grid-cols-3 border-t border-border-subtle/40 mt-4 pt-4 text-center font-mono">
+            <div>
+              <div id="modal-actuation" class="text-lg font-bold text-text-primary">38g</div>
+              <div class="text-[9px] tracking-widest text-text-muted uppercase">ACTUATION</div>
+            </div>
+            <div>
+              <div id="modal-force" class="text-lg font-bold text-text-primary">62g</div>
+              <div class="text-[9px] tracking-widest text-text-muted uppercase">BOTTOM OUT</div>
+            </div>
+            <div>
+              <div id="modal-travel" class="text-lg font-bold text-text-primary">3.8mm</div>
+              <div class="text-[9px] tracking-widest text-text-muted uppercase">TRAVEL</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Construction & Lab Summary -->
+        <div class="flex flex-col justify-between space-y-6">
+          <div>
+            <h3 class="font-mono text-xs tracking-widest text-brand uppercase mb-3">LAB ASSESSMENT</h3>
+            <p id="modal-summary" class="text-text-primary text-base leading-relaxed"></p>
+          </div>
+
+          <div>
+            <h3 class="font-mono text-xs tracking-widest text-brand uppercase mb-3">PHYSICAL SPECIFICATIONS</h3>
+            <dl class="divide-y divide-border-subtle/30 border-t border-b border-border-subtle/30 font-mono text-xs">
+              <div class="py-2.5 flex justify-between">
+                <dt class="text-text-muted">TOP HOUSING</dt>
+                <dd id="modal-top" class="font-bold text-text-primary"></dd>
+              </div>
+              <div class="py-2.5 flex justify-between">
+                <dt class="text-text-muted">BOTTOM HOUSING</dt>
+                <dd id="modal-bottom" class="font-bold text-text-primary"></dd>
+              </div>
+              <div class="py-2.5 flex justify-between">
+                <dt class="text-text-muted">STEM MATERIAL</dt>
+                <dd id="modal-stem" class="font-bold text-text-primary"></dd>
+              </div>
+              <div class="py-2.5 flex justify-between">
+                <dt class="text-text-muted">PRE-TRAVEL</dt>
+                <dd id="modal-pretravel" class="font-bold text-text-primary"></dd>
+              </div>
+              <div class="py-2.5 flex justify-between">
+                <dt class="text-text-muted">FACTORY LUBE</dt>
+                <dd id="modal-lube" class="font-bold text-text-primary"></dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="pt-6 flex justify-between items-center font-mono text-xs text-text-muted">
+        <span>TESTED ON CUSTOM LOAD CELL RIG</span>
+        <span>BATCH SAMPLE SIZE: 5 UNITS</span>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    // 1. Theme Toggle
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    themeToggleBtn?.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // 2. Filtering, View Mode, and Pagination State
+    const searchInput = document.getElementById('filter-search') as HTMLInputElement;
+    const typeSelect = document.getElementById('filter-type') as HTMLSelectElement;
+    const makerSelect = document.getElementById('filter-maker') as HTMLSelectElement;
+    const forceSelect = document.getElementById('filter-force') as HTMLSelectElement;
+    const travelSelect = document.getElementById('filter-travel') as HTMLSelectElement;
+    const resetBtn = document.getElementById('filter-reset');
+    const perPageSelect = document.getElementById('per-page') as HTMLSelectElement;
+    const matchCountEl = document.getElementById('match-count');
+    const container = document.getElementById('switches-container');
+    const emptyState = document.getElementById('empty-state');
+    const prevBtn = document.getElementById('prev-page') as HTMLButtonElement;
+    const nextBtn = document.getElementById('next-page') as HTMLButtonElement;
+    const pageIndicator = document.getElementById('page-indicator');
+    const gridBtn = document.getElementById('view-grid-btn');
+    const listBtn = document.getElementById('view-list-btn');
+
+    const items = Array.from(document.querySelectorAll('.switch-item')) as HTMLElement[];
+    let currentPage = 1;
+    let isListView = false;
+
+    function applyFiltersAndPagination() {
+      const query = searchInput.value.toLowerCase().trim();
+      const typeVal = typeSelect.value;
+      const makerVal = makerSelect.value;
+      const forceVal = forceSelect.value;
+      const travelVal = travelSelect.value;
+      const perPage = parseInt(perPageSelect.value, 10);
+
+      const matched = items.filter((item) => {
+        const name = (item.dataset.name || '').toLowerCase();
+        const maker = item.dataset.maker || '';
+        const type = item.dataset.type || '';
+        const force = parseFloat(item.dataset.force || '0');
+        const travel = parseFloat(item.dataset.travel || '0');
+
+        const matchesSearch = !query || name.includes(query) || maker.toLowerCase().includes(query);
+        const matchesType = typeVal === 'all' || type === typeVal;
+        const matchesMaker = makerVal === 'all' || maker === makerVal;
+
+        let matchesForce = true;
+        if (forceVal === 'light') matchesForce = force < 60;
+        if (forceVal === 'medium') matchesForce = force >= 60 && force <= 65;
+        if (forceVal === 'heavy') matchesForce = force > 65;
+
+        let matchesTravel = true;
+        if (travelVal === 'short') matchesTravel = travel < 3.8;
+        if (travelVal === 'standard') matchesTravel = travel >= 3.8 && travel < 4.0;
+        if (travelVal === 'full') matchesTravel = travel >= 4.0;
+
+        return matchesSearch && matchesType && matchesMaker && matchesForce && matchesTravel;
+      });
+
+      if (matchCountEl) matchCountEl.textContent = String(matched.length);
+
+      const totalPages = Math.max(1, Math.ceil(matched.length / perPage));
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const startIndex = (currentPage - 1) * perPage;
+      const visibleItems = matched.slice(startIndex, startIndex + perPage);
+
+      items.forEach((el) => el.classList.add('hidden'));
+      visibleItems.forEach((el) => el.classList.remove('hidden'));
+
+      if (emptyState && container) {
+        if (matched.length === 0) {
+          emptyState.classList.remove('hidden');
+          container.classList.add('hidden');
+        } else {
+          emptyState.classList.add('hidden');
+          container.classList.remove('hidden');
+        }
+      }
+
+      if (pageIndicator) pageIndicator.textContent = `PAGE ${currentPage} OF ${totalPages}`;
+      if (prevBtn) prevBtn.disabled = currentPage <= 1;
+      if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+    }
+
+    [searchInput, typeSelect, makerSelect, forceSelect, travelSelect, perPageSelect].forEach((control) => {
+      control?.addEventListener('input', () => {
+        currentPage = 1;
+        applyFiltersAndPagination();
+      });
+    });
+
+    resetBtn?.addEventListener('click', () => {
+      searchInput.value = '';
+      typeSelect.value = 'all';
+      makerSelect.value = 'all';
+      forceSelect.value = 'any';
+      travelSelect.value = 'any';
+      currentPage = 1;
+      applyFiltersAndPagination();
+    });
+
+    prevBtn?.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        applyFiltersAndPagination();
+      }
+    });
+
+    nextBtn?.addEventListener('click', () => {
+      currentPage++;
+      applyFiltersAndPagination();
+    });
+
+    // 3. Grid vs List View Switcher
+    function setViewMode(listMode: boolean) {
+      isListView = listMode;
+      if (!container) return;
+
+      if (isListView) {
+        container.classList.remove('md:grid-cols-2', 'lg:grid-cols-3');
+        container.classList.add('grid-cols-1');
+        listBtn?.classList.add('bg-text-primary', 'text-bg-base');
+        listBtn?.classList.remove('bg-transparent', 'text-text-muted');
+        gridBtn?.classList.remove('bg-text-primary', 'text-bg-base');
+        gridBtn?.classList.add('bg-transparent', 'text-text-muted');
+
+        items.forEach((item) => {
+          item.classList.add('md:flex-row', 'md:items-center', 'py-5');
+          item.querySelector('.item-thumb')?.classList.add('hidden');
+          item.querySelector('.item-specs')?.classList.remove('mt-6', 'pt-4', 'border-t');
+          item.querySelector('.item-specs')?.classList.add('md:w-72');
+        });
+      } else {
+        container.classList.add('md:grid-cols-2', 'lg:grid-cols-3');
+        gridBtn?.classList.add('bg-text-primary', 'text-bg-base');
+        gridBtn?.classList.remove('bg-transparent', 'text-text-muted');
+        listBtn?.classList.remove('bg-text-primary', 'text-bg-base');
+        listBtn?.classList.add('bg-transparent', 'text-text-muted');
+
+        items.forEach((item) => {
+          item.classList.remove('md:flex-row', 'md:items-center', 'py-5');
+          item.querySelector('.item-thumb')?.classList.remove('hidden');
+          item.querySelector('.item-specs')?.classList.add('mt-6', 'pt-4', 'border-t');
+          item.querySelector('.item-specs')?.classList.remove('md:w-72');
+        });
+      }
+    }
+
+    gridBtn?.addEventListener('click', () => setViewMode(false));
+    listBtn?.addEventListener('click', () => setViewMode(true));
+
+    // 4. Specimen Lightbox Modal Logic
+    const dialog = document.getElementById('switch-lightbox') as HTMLDialogElement;
+    const closeModalBtn = document.getElementById('close-modal');
+
+    items.forEach((item) => {
+      item.addEventListener('click', () => {
+        (document.getElementById('modal-id') as HTMLElement).textContent = `SPECIMEN #${item.dataset.id}`;
+        (document.getElementById('modal-name') as HTMLElement).textContent = item.dataset.name || '';
+        (document.getElementById('modal-maker') as HTMLElement).textContent = item.dataset.maker || '';
+        (document.getElementById('modal-type') as HTMLElement).textContent = item.dataset.type || '';
+        (document.getElementById('modal-actuation') as HTMLElement).textContent = `${item.dataset.actuation}g`;
+        (document.getElementById('modal-force') as HTMLElement).textContent = `${item.dataset.force}g`;
+        (document.getElementById('modal-pretravel') as HTMLElement).textContent = `${item.dataset.pretravel}mm`;
+        (document.getElementById('modal-travel') as HTMLElement).textContent = `${item.dataset.travel}mm`;
+        (document.getElementById('modal-top') as HTMLElement).textContent = item.dataset.top || '';
+        (document.getElementById('modal-bottom') as HTMLElement).textContent = item.dataset.bottom || '';
+        (document.getElementById('modal-stem') as HTMLElement).textContent = item.dataset.stem || '';
+        (document.getElementById('modal-lube') as HTMLElement).textContent = item.dataset.lube || '';
+        (document.getElementById('modal-summary') as HTMLElement).textContent = item.dataset.summary || '';
+
+        dialog?.showModal();
+      });
+    });
+
+    closeModalBtn?.addEventListener('click', () => dialog?.close());
+
+    // Close lightbox when clicking on the backdrop outside the modal box
+    dialog?.addEventListener('click', (e) => {
+      const rect = dialog.getBoundingClientRect();
+      const clickedInDialog =
+        rect.top <= e.clientY &&
+        e.clientY <= rect.top + rect.height &&
+        rect.left <= e.clientX &&
+        e.clientX <= rect.left + rect.width;
+      if (!clickedInDialog) {
+        dialog.close();
+      }
+    });
+
+    // Initialise first render
+    applyFiltersAndPagination();
+  </script>
+</Layout>

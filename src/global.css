@@ -1,38 +1,51 @@
 @import "tailwindcss";
 
-@theme {
-  /* Typography */
+/* Enable class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Light Mode Palette (8 Functional Colours) */
+:root {
+  --bg-base: #FFFAF1;       /* 1. Floral White: Main background */
+  --surface-base: #FFFFFF;  /* 2. White: Primary surface & cards */
+  --surface-input: #F5F2EB; /* 3. Muted Beige: Inputs & image placeholders */
+  --border-subtle: #A6A39C; /* 4. Muted Grey: Subtle borders & dividers */
+  --text-primary: #081C2C;  /* 5. Ink Black: Primary text */
+  --text-muted: #536068;    /* 6. Slate: Muted metadata & body text */
+  --bg-opposing: #0C2D48;   /* 7. Deep Space Blue: Contrast panels */
+  --brand: #F05A24;         /* 8. Tiger Flame: Brand orange accent */
+}
+
+/* Dark Mode Palette (8 Functional Colours) */
+html.dark {
+  --bg-base: #071722;       /* 1. Ink Black: Main background */
+  --surface-base: #0C2D48;  /* 2. Deep Space Blue: Elevated surface */
+  --surface-input: #102B3F; /* 3. Elevated Navy: Search bar & placeholders */
+  --border-subtle: #294253; /* 4. Subtle Divider: Borders & grid lines */
+  --text-primary: #F7F0E4;  /* 5. Old Lace: Primary text */
+  --text-muted: #7F909A;    /* 6. Steel Muted: Secondary text & metadata */
+  --bg-opposing: #0C2D48;   /* 7. Deep Space Blue: Contrast panels */
+  --brand: #F05A24;         /* 8. Tiger Flame: Brand orange accent */
+}
+
+/* Map dynamic CSS variables to Tailwind utility classes */
+@theme inline {
   --font-sans: "Manrope", sans-serif;
   --font-mono: "DM Mono", monospace;
 
-  /* Accent colours */
-  --color-brand: #F05A24;        /* Tiger Flame */
-  --color-accent-light: #F28A5E; /* Light Orange */
+  --color-bg-base: var(--bg-base);
+  --color-surface-base: var(--surface-base);
+  --color-surface-input: var(--surface-input);
+  --color-border-subtle: var(--border-subtle);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-bg-opposing: var(--bg-opposing);
+  --color-brand: var(--brand);
 
-  /* Functional UI Colours - Default (Light Mode) */
-  --color-bg-base: #FFFAF1;       /* Floral White */
-  --color-surface-base: #FFFFFF;  /* White */
-  --color-surface-input: #F5F2EB; /* Muted Beige */
-  --color-border-subtle: #A6A39C; /* Muted Grey */
-  --color-text-primary: #081C2C;  /* Ink Black */
-  --color-text-muted: #536068;    /* Slate */
-  --color-bg-opposing: #0C2D48;   /* Deep Space Blue */
-}
-
-/* Dark Mode Overrides */
-html.dark {
-  --color-bg-base: #071722;       /* Ink Black */
-  --color-surface-base: #0C2D48;  /* Deep Space Blue */
-  --color-surface-input: #102B3F; /* Elevated Navy */
-  --color-border-subtle: #294253; /* Subtle Divider */
-  --color-text-primary: #F7F0E4;  /* Old Lace */
-  --color-text-muted: #7F909A;    /* Steel Muted */
-  --color-bg-opposing: #071722;   /* Fallback to dark base if needed, or maintain Contrast */
-}
-
-/* Custom Utilities for Interactive Transitions */
-@layer utilities {
-  .transition-theme {
-    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-  }
+  /* Fixed dark tokens for sections that remain dark in both modes */
+  --color-dark-canvas: #071722;
+  --color-dark-navy: #0C2D48;
+  --color-dark-input: #102B3F;
+  --color-dark-border: #294253;
+  --color-dark-text: #F7F0E4;
+  --color-dark-muted: #7F909A;
 }
